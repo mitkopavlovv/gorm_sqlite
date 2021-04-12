@@ -14,7 +14,8 @@ func main() {
 	//MUX Router:
 	router := mux.NewRouter()
 	router.HandleFunc("/api/register", UserRegiter).Methods("POST")
-	fmt.Println("Server started")
-	log.Println(http.ListenAndServe(":8000", router))
+	port := "8000"
+	fmt.Println("Server started on port " + port)
+	log.Println(http.ListenAndServe(":"+port, router))
 
 }

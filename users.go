@@ -1,10 +1,12 @@
 package main
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"golang.org/x/crypto/pbkdf2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -61,7 +63,9 @@ func UserRegiter(w http.ResponseWriter, r *http.Request) {
 		if user_err := db.Where("username = ?", person_struct.Username).First(&person_struct).Error; user_err != nil {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
-
+			salt := []byte("mysaltedSalt")
+			derivedKey := pbkdf2.Key([]byte(person_struct.Password), salt, 10, 256, sha256.New)
+			person_struct.Password = string(derivedKey)
 			db.Create(&person_struct)
 			db.Save(&person_struct)
 			js_response, err_json := json.Marshal(person_struct)
