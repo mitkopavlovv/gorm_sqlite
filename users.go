@@ -13,7 +13,7 @@ import (
 
 type User struct {
 	gorm.Model
-	Id       uint   `json:"id" gorm:"primaryKey" `
+	Id       uint   `json:"id" gorm:"primaryKey"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -60,6 +60,7 @@ func UserRegiter(w http.ResponseWriter, r *http.Request) {
 
 		w.Write(js_response)
 	} else {
+		// Check if the desired user exists:
 		if user_err := db.Where("username = ?", person_struct.Username).First(&person_struct).Error; user_err != nil {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
